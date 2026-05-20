@@ -15,6 +15,10 @@ function App() {
     { title: "Finals Wellness Night", date: "May 25", location: "Student Center" },
   ];
 
+  const filteredEvents = events.filter((event) =>
+    event.title.toLowerCase().includes(search.toLowerCase())
+  );
+
   const [groups, setGroups] = useState([
     "CSC 131 Study Group",
     "Calculus Review Group",
@@ -25,10 +29,6 @@ function App() {
     "Maya: Anyone want to review UML diagrams?",
     "Alex: I can meet after class.",
   ]);
-
-  const filteredEvents = events.filter((event) =>
-    event.title.toLowerCase().includes(search.toLowerCase())
-  );
 
   function createGroup() {
     if (newGroup.trim() === "") return;
@@ -45,8 +45,17 @@ function App() {
   return (
     <div className="app">
       <header>
-        <h1>CampusConnect</h1>
-        <p>Find campus events, create study groups, and communicate with classmates.</p>
+        <div className="brand-row">
+          <div className="logo-circle">CS</div>
+
+          <div>
+            <h1>CampusConnect</h1>
+            <p>
+              Sac State inspired student hub for events, study groups,
+              and collaboration.
+            </p>
+          </div>
+        </div>
 
         <div className="login-box">
           <input
@@ -54,6 +63,7 @@ function App() {
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
+
           <button onClick={() => setLoggedIn(!loggedIn)}>
             {loggedIn ? "Registered" : "Login / Register"}
           </button>
@@ -64,18 +74,39 @@ function App() {
         <button onClick={() => setPage("events")}>Events</button>
         <button onClick={() => setPage("groups")}>Study Groups</button>
         <button onClick={() => setPage("messages")}>Messages</button>
-        <button onClick={() => setPage("notifications")}>Notifications</button>
+        <button onClick={() => setPage("notifications")}>
+          Notifications
+        </button>
       </nav>
+
+      <section className="stats">
+        <div className="stat-card">
+          <h3>3</h3>
+          <p>Upcoming Events</p>
+        </div>
+
+        <div className="stat-card">
+          <h3>{groups.length}</h3>
+          <p>Study Groups</p>
+        </div>
+
+        <div className="stat-card">
+          <h3>{messages.length}</h3>
+          <p>Messages</p>
+        </div>
+      </section>
 
       <main>
         {page === "events" && (
           <section className="card">
             <h2>Campus Events</h2>
+
             <input
               placeholder="Search events..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
+
             <div className="grid">
               {filteredEvents.map((event, index) => (
                 <div className="item" key={index}>
@@ -91,12 +122,14 @@ function App() {
         {page === "groups" && (
           <section className="card">
             <h2>Study Groups</h2>
+
             <div className="row">
               <input
                 placeholder="Create a study group"
                 value={newGroup}
                 onChange={(e) => setNewGroup(e.target.value)}
               />
+
               <button onClick={createGroup}>Create</button>
             </div>
 
@@ -112,12 +145,14 @@ function App() {
         {page === "messages" && (
           <section className="card">
             <h2>Messages</h2>
+
             <div className="row">
               <input
                 placeholder="Type a message"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
               />
+
               <button onClick={sendMessage}>Send</button>
             </div>
 
@@ -132,9 +167,18 @@ function App() {
         {page === "notifications" && (
           <section className="card">
             <h2>Notifications</h2>
-            <div className="item">Career Fair starts May 20.</div>
-            <div className="item">You joined CSC 131 Study Group.</div>
-            <div className="item">New message from Maya.</div>
+
+            <div className="item">
+              Career Fair starts May 20.
+            </div>
+
+            <div className="item">
+              You joined CSC 131 Study Group.
+            </div>
+
+            <div className="item">
+              New message from Maya.
+            </div>
           </section>
         )}
       </main>
