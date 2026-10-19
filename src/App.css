@@ -51,7 +51,6 @@ header p {
   color: #d1fae5;
 }
 
-.login-box,
 .row {
   display: flex;
   gap: 12px;
@@ -86,47 +85,6 @@ button {
 button:hover {
   transform: scale(1.03);
   opacity: 0.92;
-}
-
-nav {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin-bottom: 24px;
-}
-
-nav .nav-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px 18px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-  color: white;
-  font-weight: bold;
-  text-decoration: none;
-  transition: 0.3s;
-}
-
-nav .nav-link:hover {
-  background: rgba(255,255,255,0.16);
-}
-
-nav .nav-link.active {
-  background: linear-gradient(135deg, #16a34a, #eab308);
-  border-color: transparent;
-}
-
-.badge {
-  min-width: 22px;
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: #facc15;
-  color: #022c22;
-  font-size: 12px;
 }
 
 .stats {
@@ -256,11 +214,6 @@ button.link.danger {
   white-space: nowrap;
 }
 
-.signed-in {
-  align-items: center;
-  justify-content: space-between;
-}
-
 .card-header {
   display: flex;
   align-items: flex-start;
@@ -350,34 +303,6 @@ input[type="time"] {
   margin-top: 14px;
 }
 
-.event {
-  display: flex;
-  flex-direction: column;
-  margin-top: 0;
-}
-
-.event .actions {
-  margin-top: auto;
-  padding-top: 14px;
-}
-
-.group {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.group h3 a {
-  color: #fde68a;
-  text-decoration: none;
-}
-
-.group .actions {
-  margin-top: 0;
-  justify-content: flex-end;
-}
-
 .back {
   display: inline-block;
   margin-bottom: 8px;
@@ -416,17 +341,6 @@ input[type="time"] {
   margin-bottom: 4px;
 }
 
-.chat-preview {
-  display: block;
-  color: white;
-  text-decoration: none;
-}
-
-.reminder {
-  border-color: rgba(250,204,21,0.5);
-  background: rgba(250,204,21,0.12);
-}
-
 footer {
   margin-top: 32px;
   padding: 16px 0 8px;
@@ -439,21 +353,203 @@ footer p {
   margin: 6px 0;
 }
 
-@media (max-width: 800px) {
-  nav {
-    grid-template-columns: repeat(2, 1fr);
-  }
+main {
+  display: block;
+}
 
+.stack {
+  display: grid;
+  gap: 24px;
+}
+
+.narrow {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.two-col .form {
+  margin: 0;
+}
+
+.form h3 {
+  margin: 0;
+  color: #fde68a;
+}
+
+.brand-text {
+  flex: 1;
+}
+
+.logo-circle {
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #d1fae5;
+}
+
+code {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(0,0,0,0.3);
+  font-size: 0.9em;
+}
+
+.code-input {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 18px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.class-card {
+  display: block;
+  margin-top: 0;
+  color: white;
+  text-decoration: none;
+}
+
+.group-card {
+  margin-top: 0;
+}
+
+.members {
+  margin: 6px 0;
+  color: white;
+}
+
+.invite {
+  display: flex;
+  gap: 24px;
+  align-items: flex-end;
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(0,0,0,0.18);
+}
+
+.invite .muted {
+  margin: 0 0 6px;
+}
+
+.invite-link {
+  flex: 1;
+}
+
+.invite-link .row {
+  margin-top: 0;
+}
+
+.join-code {
+  margin: 0;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: #facc15;
+}
+
+.roster {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.roster li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.08);
+}
+
+.student-name {
+  flex: 1;
+}
+
+select {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(255,255,255,0.14);
+  color: white;
+  font: inherit;
+}
+
+select option {
+  color: #022c22;
+}
+
+.tag {
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #facc15;
+  color: #022c22;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.message.professor {
+  border: 1px solid rgba(250,204,21,0.5);
+}
+
+.message-body {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.error {
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(239,68,68,0.15);
+  border: 1px solid rgba(252,165,165,0.5);
+  color: #fecaca;
+}
+
+.button-link.primary {
+  background: linear-gradient(135deg, #16a34a, #eab308);
+  border-color: transparent;
+}
+
+.danger-zone {
+  border-color: rgba(252,165,165,0.3);
+}
+
+.danger-button {
+  background: rgba(239,68,68,0.6);
+}
+
+.footer-action {
+  text-align: center;
+}
+
+@media (max-width: 800px) {
   .grid,
-  .form-row {
+  .form-row,
+  .two-col {
     grid-template-columns: 1fr;
   }
 
-  .login-box,
   .row,
   .brand-row,
-  .group,
-  .card-header {
+  .card-header,
+  .account,
+  .invite,
+  .roster li {
     flex-direction: column;
     align-items: stretch;
   }

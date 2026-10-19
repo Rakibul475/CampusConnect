@@ -1,14 +1,24 @@
 import { describe, expect, it } from "vitest";
-import { parseHash } from "./useHashRoute";
+import { groupPath, inviteLink, parseHash } from "./useHashRoute";
 
 describe("parseHash", () => {
-  it("reads the page and optional id", () => {
-    expect(parseHash("#/groups/csc-131")).toEqual({ page: "groups", id: "csc-131" });
-    expect(parseHash("#/messages")).toEqual({ page: "messages", id: null });
+  it("reads class, group and join routes", () => {
+    expect(parseHash("#/classes/c1")).toEqual({ name: "class", classId: "c1" });
+    expect(parseHash("#/classes/c1/groups/g1")).toEqual({ name: "group", classId: "c1", groupId: "g1" });
+    expect(parseHash("#/join/ABC234")).toEqual({ name: "join", code: "ABC234" });
   });
 
-  it("falls back to events for empty or unknown hashes", () => {
-    expect(parseHash("")).toEqual({ page: "events", id: null });
-    expect(parseHash("#/nope")).toEqual({ page: "events", id: null });
+  it("falls back to home for empty or unknown hashes", () => {
+    expect(parseHash("")).toEqual({ name: "home" });
+    expect(parseHash("#/")).toEqual({ name: "home" });
+    expect(parseHash("#/nope")).toEqual({ name: "home" });
+    expect(parseHash("#/join")).toEqual({ name: "home" });
+  });
+});
+
+describe("links", () => {
+  it("builds group paths and invite links", () => {
+    expect(groupPath("c1", "g1")).toBe("#/classes/c1/groups/g1");
+    expect(inviteLink("ABC234", "https://example.app")).toBe("https://example.app/#/join/ABC234");
   });
 });

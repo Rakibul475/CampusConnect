@@ -7,10 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "test": "vitest run",
+    "test": "vitest run --dir src",
+    "test:db": "vitest run --dir supabase/tests",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.75.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
   },

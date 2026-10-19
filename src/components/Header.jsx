@@ -1,51 +1,27 @@
-import { useState } from "react";
+import { signOut } from "../lib/api";
 
-function Header({ user, dispatch }) {
-  const [name, setName] = useState("");
-
-  function signIn(e) {
-    e.preventDefault();
-    dispatch({ type: "signIn", name });
-    setName("");
-  }
-
+function Header({ profile }) {
   return (
     <header>
       <div className="brand-row">
-        <div className="logo-circle" aria-hidden="true">CS</div>
+        <a className="logo-circle" href="#/" aria-label="CampusConnect home">CS</a>
 
-        <div>
+        <div className="brand-text">
           <h1>CampusConnect</h1>
-          <p>
-            Sac State inspired student hub for events, study groups,
-            and collaboration.
-          </p>
+          <p>Private group chats for your classes, with your professor in the loop.</p>
         </div>
-      </div>
 
-      {user ? (
-        <div className="login-box signed-in">
-          <p>
-            Signed in as <strong>{user}</strong>
-          </p>
-          <button className="secondary" onClick={() => dispatch({ type: "signOut" })}>
-            Sign out
-          </button>
-        </div>
-      ) : (
-        <form className="login-box" onSubmit={signIn}>
-          <label className="sr-only" htmlFor="name">Your name</label>
-          <input
-            id="name"
-            placeholder="Your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <button type="submit" disabled={!name.trim()}>
-            Sign in
-          </button>
-        </form>
-      )}
+        {profile && (
+          <div className="account">
+            <span>
+              Signed in as <strong>{profile.full_name}</strong>
+            </span>
+            <button className="secondary" onClick={() => signOut()}>
+              Sign out
+            </button>
+          </div>
+        )}
+      </div>
     </header>
   );
 }
