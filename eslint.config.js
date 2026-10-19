@@ -18,4 +18,8 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  {
+    files: ['supabase/tests/**/*.js'],
+    languageOptions: { globals: globals.node },
+  },
 ])
