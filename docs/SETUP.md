@@ -5,9 +5,9 @@ CampusConnect stores accounts, classes, groups and messages in [Supabase](https:
 ## 1. Create the Supabase project
 
 1. Sign in at [supabase.com](https://supabase.com) and click **New project**. Pick any name and a strong database password, and the region closest to you (for example *West US*).
-2. When the project is ready, open **SQL Editor**, click **New query**, paste the whole file [`supabase/migrations/20261019000000_classes_and_group_chats.sql`](../supabase/migrations/20261019000000_classes_and_group_chats.sql), and click **Run**. It should finish with "Success. No rows returned".
+2. When the project is ready, open **SQL Editor** and run each file in [`supabase/migrations`](../supabase/migrations) in order (paste it into **New query**, click **Run**, and wait for "Success. No rows returned" before the next one).
 
-That file creates the tables, the access rules (who can see which groups and messages), and turns on live updates for chat messages.
+Those files create the tables, the access rules (who can see which groups and messages), and turn on live updates for chat messages.
 
 ## 2. Configure sign-in
 
