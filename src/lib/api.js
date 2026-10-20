@@ -1,3 +1,4 @@
+import { summarizeMessages } from "./participation";
 import { supabase } from "./supabase";
 
 function check({ data, error }) {
@@ -167,19 +168,36 @@ export async function listMessages(groupId) {
   );
 }
 
-export async function messageCounts(groupIds) {
-  if (groupIds.length === 0) return new Map();
-  const rows = check(
-    await supabase.from("messages").select("group_id, created_at").in("group_id", groupIds)
-  );
-  const stats = new Map();
-  for (const row of rows) {
-    const s = stats.get(row.group_id) ?? { count: 0, last: null };
-    s.count += 1;
-    if (!s.last || row.created_at > s.last) s.last = row.created_at;
-    stats.set(row.group_id, s);
+// PostgREST returns at most 1000 rows per request, so page through.
+async function fetchAllMessages(groupIds, columns) {
+  if (groupIds.length === 0) return [];
+  const pageSize = 1000;
+  const rows = [];
+  for (let from = 0; ; from += pageSize) {
+    const page = check(
+      await supabase
+        .from("messages")
+        .select(columns)
+        .in("group_id", groupIds)
+        .order("id")
+        .range(from, from + pageSize - 1)
+    );
+    rows.push(...page);
+    if (page.length < pageSize) return rows;
   }
-  return stats;
+}
+
+// Professor only: message counts per group and per student.
+export async function messageStats(groupIds) {
+  return summarizeMessages(await fetchAllMessages(groupIds, "group_id, user_id, created_at"));
+}
+
+// Professor only: every message in the given groups, oldest first.
+export async function exportMessages(groupIds) {
+  return fetchAllMessages(
+    groupIds,
+    "group_id, created_at, body, user_id, author:profiles!messages_user_id_fkey(full_name)"
+  );
 }
 
 export async function sendMessage(groupId, body) {

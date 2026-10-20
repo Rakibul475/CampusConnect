@@ -19,6 +19,8 @@ A professor creates a class and shares a join code. Students sign in, join the c
 - Add groups, with an optional size limit.
 - See every student, which group they're in, and move or remove them.
 - Open any group's chat, read the discussion, post as the professor, and delete messages.
+- See how many messages each student has posted and when they were last active.
+- Download every group's chat as a CSV file for grading.
 
 **Students**
 - Sign up with their name and email, then join with the code or link.
@@ -73,7 +75,6 @@ npm run dev
 - [ ] Professor announcements to the whole class
 - [ ] Notifications for new messages
 - [ ] Share files in group chats
-- [ ] Export a group's discussion for grading
 
 ## Contributing
 
