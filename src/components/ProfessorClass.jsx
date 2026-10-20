@@ -3,13 +3,15 @@ import {
   createGroup,
   deleteClass,
   deleteGroup,
+  exportMessages,
   listGroupMembers,
   listGroups,
   listRoster,
-  messageCounts,
+  messageStats,
   placeStudent,
   removeStudent,
 } from "../lib/api";
+import { downloadCsv, toCsv } from "../lib/csv";
 import { timeAgo } from "../lib/dates";
 import { useAsync } from "../lib/useAsync";
 import { groupPath, inviteLink, navigate } from "../lib/useHashRoute";
@@ -21,7 +23,7 @@ async function loadClassOverview(classId) {
     listGroupMembers(classId),
     listRoster(classId),
   ]);
-  const stats = await messageCounts(groups.map((g) => g.id));
+  const stats = await messageStats(groups.map((g) => g.id));
   return { groups, members, roster, stats };
 }
 
@@ -93,6 +95,37 @@ function CreateGroupForm({ classId, onCreated }) {
   );
 }
 
+function ExportButton({ cls, groups }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
+
+  async function download() {
+    setBusy(true);
+    setError(null);
+    try {
+      const names = new Map(groups.map((g) => [g.id, g.name]));
+      const rows = (await exportMessages(groups.map((g) => g.id)))
+        .map((m) => [names.get(m.group_id), m.created_at, m.author?.full_name, m.body])
+        .sort((a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1]));
+      const safeName = cls.name.replace(/[^\w-]+/g, "-").replace(/^-|-$/g, "") || "class";
+      downloadCsv(`${safeName}-chats.csv`, toCsv(["Group", "Sent at (UTC)", "Student", "Message"], rows));
+    } catch (err) {
+      setError(err);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <>
+      <button className="secondary" onClick={download} disabled={busy || groups.length === 0}>
+        {busy ? "Preparing…" : "Download all chats (CSV)"}
+      </button>
+      <ErrorNote error={error} />
+    </>
+  );
+}
+
 function ProfessorClass({ cls }) {
   const { data, error, loading, reload } = useAsync(() => loadClassOverview(cls.id), [cls.id]);
   const [actionError, setActionError] = useState(null);
@@ -145,7 +178,10 @@ function ProfessorClass({ cls }) {
           </section>
 
           <section className="card">
-            <h2>Groups</h2>
+            <div className="card-header">
+              <h2>Groups</h2>
+              <ExportButton cls={cls} groups={data.groups} />
+            </div>
             <p className="muted">
               Students pick a group themselves, or you can place them from the roster below.
               Only you can see who is in each group and read every chat.
@@ -157,7 +193,7 @@ function ProfessorClass({ cls }) {
             <div className="grid">
               {data.groups.map((group) => {
                 const members = data.members.filter((m) => m.group_id === group.id);
-                const stats = data.stats.get(group.id);
+                const stats = data.stats.byGroup.get(group.id);
                 return (
                   <article className="item group-card" key={group.id}>
                     <h3>{group.name}</h3>
@@ -193,39 +229,50 @@ function ProfessorClass({ cls }) {
 
           <section className="card">
             <h2>Students</h2>
+            <p className="muted">How much each student has posted in their group chat.</p>
             {data.roster.length === 0 ? (
               <p className="empty">No students yet. Share the join code or invite link above.</p>
             ) : (
               <ul className="roster">
-                {data.roster.map((student) => (
-                  <li key={student.user_id}>
-                    <span className="student-name">{student.profile?.full_name}</span>
-                    <label className="sr-only" htmlFor={`group-${student.user_id}`}>
-                      Group for {student.profile?.full_name}
-                    </label>
-                    <select
-                      id={`group-${student.user_id}`}
-                      value={groupOf.get(student.user_id) ?? ""}
-                      onChange={(e) =>
-                        act(() => placeStudent({ classId: cls.id, groupId: e.target.value, userId: student.user_id }))
-                      }
-                    >
-                      <option value="">No group</option>
-                      {data.groups.map((g) => (
-                        <option key={g.id} value={g.id}>{g.name}</option>
-                      ))}
-                    </select>
-                    <button
-                      className="link danger"
-                      onClick={() =>
-                        window.confirm(`Remove ${student.profile?.full_name} from this class?`) &&
-                        act(() => removeStudent(cls.id, student.user_id))
-                      }
-                    >
-                      Remove
-                    </button>
-                  </li>
-                ))}
+                {data.roster.map((student) => {
+                  const posted = data.stats.byStudent.get(student.user_id);
+                  return (
+                    <li key={student.user_id}>
+                      <span className="student-name">
+                        {student.profile?.full_name}
+                        <span className="participation">
+                          {posted
+                            ? `${posted.count} ${posted.count === 1 ? "message" : "messages"} · last ${timeAgo(posted.last)}`
+                            : "Hasn't posted yet"}
+                        </span>
+                      </span>
+                      <label className="sr-only" htmlFor={`group-${student.user_id}`}>
+                        Group for {student.profile?.full_name}
+                      </label>
+                      <select
+                        id={`group-${student.user_id}`}
+                        value={groupOf.get(student.user_id) ?? ""}
+                        onChange={(e) =>
+                          act(() => placeStudent({ classId: cls.id, groupId: e.target.value, userId: student.user_id }))
+                        }
+                      >
+                        <option value="">No group</option>
+                        {data.groups.map((g) => (
+                          <option key={g.id} value={g.id}>{g.name}</option>
+                        ))}
+                      </select>
+                      <button
+                        className="link danger"
+                        onClick={() =>
+                          window.confirm(`Remove ${student.profile?.full_name} from this class?`) &&
+                          act(() => removeStudent(cls.id, student.user_id))
+                        }
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </section>
